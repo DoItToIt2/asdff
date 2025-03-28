@@ -1,10 +1,13 @@
 const request = require('request');
 const cheerio = require('cheerio');
 const express = require('express');
+const dotenv = require('dotenv');
+dotenv.config();
+
+const PORT = process.env.PORT || 3000;
 
 // Iniciar el servidor Express
 const app = express();
-const PORT = 3000;
 
 // Middleware para manejar solicitudes JSON
 app.use(express.json());
@@ -60,6 +63,6 @@ app.get('/scrape', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT || 3000, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
