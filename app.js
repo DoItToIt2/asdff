@@ -3,6 +3,7 @@ const cheerio = require('cheerio');
 const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config();
+const cors = require('cors');
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -14,8 +15,16 @@ app.get('/', (req, res) => {
   res.send('Servidor funcionando!');
 });
 
+// Middleware para manejar CORS
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+
 // Ruta para obtener y segmentar los datos de la página web usando axios
-app.get('/scrape', async (req, res) => {
+app.post('/scrape', async (req, res) => {
   try {
     const { documento } = req.body;
     if (!documento) {
@@ -64,17 +73,15 @@ app.get('/scrape', async (req, res) => {
       .text()
       .trim();
 
-    // Separar nombres y apellidos por espacios en blanco (incluyendo saltos de línea)
+    // Separar nombres y apellidos por espacios en blanco
     const nombresArr = nombresStr.split(/\s+/);
     const apellidosArr = apellidosStr.split(/\s+/);
 
-    // Asignar cada parte, considerando que puedan no existir suficientes elementos
     const nombre1 = nombresArr[0] || '';
     const nombre2 = nombresArr[1] || '';
     const apellido1 = apellidosArr[0] || '';
     const apellido2 = apellidosArr[1] || '';
 
-    // Retornar la respuesta en formato JSON
     res.json({
       nombre1,
       nombre2,
